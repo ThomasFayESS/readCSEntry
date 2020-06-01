@@ -28,6 +28,7 @@ looseMatch = args.looseMatch
 
 full = args.full
 field = args.field
+
 created_after = args.created_after
 created_before = args.created_before
 updated_after = args.updated_after
@@ -48,6 +49,14 @@ if len(validKeys) < 1:
     print("No valid keys found for this entry.")
     exit(1)
 
+if 'name' in validKeys:
+    mainKey = 'name'
+else:
+    for elKey in validKeys:
+        if 'name' in elKey:
+            mainKey = elKey
+
+
 if showKeys is not None:
     print("Valid keys:")
     for el in validKeys:
@@ -60,12 +69,10 @@ if peekFirst is not None:
         print("---" + str(el) + ": " + str(entry[el]))
 
 def getFields(entry, full, field):
-    if 'name' in validKeys:
-        print(entry['name'])
+    if len(mainKey) > 0:
+        print(entry[mainKey])
     else:
-        for elKey in validKeys:
-            if 'name' in elKey:
-                print(entry[elKey])
+        print("***New Entry***")
 
     if full is not None:
         for field in validKeys:
