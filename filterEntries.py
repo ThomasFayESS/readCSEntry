@@ -10,11 +10,6 @@ parser.add_argument('--showKeys', action="store_const", const=True, help = "Show
 parser.add_argument('--peekFirst', action="store_const", const=True, help = "Show the first entry of the input file.")
 parser.add_argument('--match', help="Return all entries where match is true. Format is 'field operator value'")
 parser.add_argument('--looseMatch', help="Return all entries where any field contains this value'")
-parser.add_argument('--user', help="Match specified user.")
-parser.add_argument('--all', action='store_const', const=True, help = "Return all fields for all hosts.")
-parser.add_argument('--ioc', action="store_const", const=True, help = "Return all IOC server hosts.")
-parser.add_argument('--name', nargs='?', const = "all", help = "Return all hosts matching name.")
-parser.add_argument('--device', help = "Return all hosts matching specified device type.")
 parser.add_argument('--created_after', help = "Return all hosts created on or after date in format yyyy-mm-dd hh:mm.")
 parser.add_argument('--created_before', help = "Return all hosts created on or before date in format yyyy-mm-dd hh:mm.")
 parser.add_argument('--updated_after', help = "Return all hosts updated on or after date in format yyyy-mm-dd hh:mm.")
@@ -30,12 +25,6 @@ peekFirst = args.peekFirst
 
 match = args.match
 looseMatch = args.looseMatch
-
-user = args.user
-all = args.all
-ioc = args.ioc
-name = args.name
-device = args.device
 
 full = args.full
 field = args.field
@@ -59,21 +48,6 @@ if len(validKeys) < 1:
     print("No valid keys found for this entry.")
     exit(1)
 
-if match is not None:
-    if len(match.split(' ')) < 3:
-        print("Match must be of form 'value operator field'.")
-        print("For example --match 'thomas in user' is valid expression.")
-        exit(1)
-    else:
-        listMatch = match.split(' ')
-        matchOperator = listMatch[1]
-        matchValue = listMatch[0]
-        matchField = listMatch[2]
-        if matchField not in validKeys:
-            print("Field to match against is invalid: " + matchField)
-            exit(1)
-
-
 if showKeys is not None:
     print("Valid keys:")
     for el in validKeys:
@@ -86,7 +60,13 @@ if peekFirst is not None:
         print("---" + str(el) + ": " + str(entry[el]))
 
 def getFields(entry, full, field):
-    print(entry['name'])
+    if 'name' in validKeys:
+        print(entry['name'])
+    else:
+        for elKey in validKeys:
+            if 'name' in elKey:
+                print(entry[elKey])
+
     if full is not None:
         for field in validKeys:
             print("---" + field + ": " + str(entry[field]))
@@ -96,80 +76,20 @@ def getFields(entry, full, field):
         else:
             print("---field not found: " + field)
 
-if match is not None:
+if match is not None and field is not None:
     for entry in listEntries:
-        if matchOperator == "in":
-            if matchValue in entry[matchField]:
-                getFields(entry, full, matchField)
-        elif matchOperator == "==":
-            if matchValue == entry[matchField]:
-                getFields(entry, full, matchField)
-        elif matchOperator == "<=":
-            if matchValue <= entry[matchField]:
-                getFields(entry, full, matchField)
-        elif matchOperator == ">=":                
-            if matchValue >= entry[matchField]:
-                getFields(entry, full, matchField)
+        if match in entry[field]:
+            getFields(entry, full, field)
+
+if field is not None and match is None:
+    for entry in listEntries:
+        getFields(entry, full, field)
 
 if looseMatch is not None:
     for entry in listEntries:
         for elKey in validKeys:
             if looseMatch in str(entry[elKey]):
                 getFields(entry, full, elKey)
-
-if all is not None:
-    for entry in listEntries:
-        getFields(entry, full, field)
-
-if name is not None:
-    for entry in listEntries:
-        if name in entry['name'] or name == "all":
-            getFields(entry, full, field)
-
-if user is not None:
-    for entry in listEntries:
-        if user in entry['user']:
-            getFields(entry, full, field)
-
-if user is not None:
-    for entry in listEntries:
-        if user in entry['user']:
-            getFields(entry, full, field)
-
-if ioc is not None:
-    for entry in listEntries:
-        if entry['is_ioc'] == True:
-            getFields(entry, full, field)
-
-if device is not None:
-    for entry in listEntries:
-        if device in entry['device_type']:
-            getFields(entry, full, field)
-
-if created_after is not None:
-    for entry in listEntries:
-        if entry['created_at'] >= created_after:
-            getFields(entry, full, field)
-
-if created_before is not None:
-    for entry in listEntries:
-        if entry['created_at'] <= created_before:
-            getFields(entry, full, field)
-
-if updated_after is not None:
-    for entry in listEntries:
-        if entry['updated_at'] >= updated_after:
-            getFields(entry, full, field)
-
-if updated_before is not None:
-    for entry in listEntries:
-        if entry['updated_at'] <= updated_before:
-            getFields(entry, full, field)
-
-if ioc is not None:
-    for entry in listEntries:
-        if entry['is_ioc'] == True:
-            getFields(entry, full, field)
 
 if created_after is not None:
     for entry in listEntries:
