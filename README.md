@@ -1,11 +1,11 @@
 # readCSEntry
 Read-only client to get information from CSEntry API.
 
-Two simple scripts are available for interrogating CSEntry:  
+## Interrogate CSEntry  
 fetch.py is for fetching information from CSEntry and saving locally in JSON format.  
 filterEntries.py gives basic functionality for pattern matching and more from the information fetched from CSEntry. 
 
-And two general purpose network interrogation helper scripts.  
+## General purpose network interrogation helper scripts  
 scan.sh scans a given subnet for online IPs.  
 nameLookup.sh returns interface names for a given list of IPs.  
 
