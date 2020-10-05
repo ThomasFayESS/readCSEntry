@@ -5,7 +5,7 @@ Two simple scripts are available for interrogating CSEntry:
 fetch.py is for fetching information from CSEntry and saving locally in JSON format.  
 filterEntries.py gives basic functionality for pattern matching and more from the information fetched from CSEntry. 
 
-And two general purpose network interrogation helpder scripts.  
+And two general purpose network interrogation helper scripts.  
 scan.sh scans a given subnet for online IPs.  
 nameLookup.sh returns interface names for a given list of IPs.  
 
